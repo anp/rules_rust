@@ -25,8 +25,8 @@ bzl_library(
 rust_wasm_bindgen_toolchain(
     name = "default_wasm_bindgen_toolchain_impl",
     browser = select({
-        "//settings:test_browser_chrome": "@chrome",
-        "//settings:test_browser_firefox": "@firefox",
+        "//settings:test_browser_chrome": "//chrome",
+        "//settings:test_browser_firefox": "//firefox",
         "//settings:test_browser_safari": None,
     }),
     browser_type = select({
@@ -39,9 +39,9 @@ rust_wasm_bindgen_toolchain(
     wasm_bindgen_test = "//3rdparty:wasm_bindgen_test",
     wasm_bindgen_test_runner = "//3rdparty:wasm_bindgen_test_runner",
     webdriver = select({
-        "//settings:test_browser_chrome": "@chromedriver",
-        "//settings:test_browser_firefox": "@geckodriver",
-        "//settings:test_browser_safari": "@safaridriver",
+        "//settings:test_browser_chrome": "//chromedriver",
+        "//settings:test_browser_firefox": "//geckodriver",
+        "//settings:test_browser_safari": "//safaridriver",
     }),
     webdriver_args = select({
         "//settings:test_browser_chrome": ["--verbose"],
@@ -49,6 +49,36 @@ rust_wasm_bindgen_toolchain(
         "//settings:test_browser_safari": [],
     }),
     webdriver_json = "webdriver.json",
+)
+
+alias(
+    name = "chrome",
+    actual = "@chrome",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "chromedriver",
+    actual = "@chromedriver",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "firefox",
+    actual = "@firefox",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "geckodriver",
+    actual = "@geckodriver",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "safaridriver",
+    actual = "@safaridriver",
+    visibility = ["//visibility:public"],
 )
 
 toolchain(
