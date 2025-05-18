@@ -125,11 +125,6 @@ fn main() {
 
     // Update any existing environment variables.
     let mut env = env::vars().collect::<BTreeMap<_, _>>();
-    env.insert("TMP".to_string(), env["TEST_TMPDIR"].clone());
-    env.insert("TEMP".to_string(), env["TEST_TMPDIR"].clone());
-    env.insert("TMPDIR".to_string(), env["TEST_TMPDIR"].clone());
-    env.insert("HOME".to_string(), env["TEST_TMPDIR"].clone());
-    env.insert("USERPROFILE".to_string(), env["TEST_TMPDIR"].clone());
 
     let webdriver_args =
         env::var("WEBDRIVER_ARGS").expect("Failed to find WEBDRIVER_ARGS env var.");
