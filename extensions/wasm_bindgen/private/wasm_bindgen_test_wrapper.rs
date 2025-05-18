@@ -91,7 +91,8 @@ fn main() {
 
     let test_runner = rlocation!(
         runfiles,
-        env::var("WASM_BINDGEN_TEST_RUNNER").expect("Failed to find TEST_WASM_BINARY env var")
+        env::var("WASM_BINDGEN_TEST_RUNNER")
+            .expect("Failed to find WASM_BINDGEN_TEST_RUNNER env var")
     )
     .expect("Failed to locate test binary");
     let test_bin = rlocation!(
