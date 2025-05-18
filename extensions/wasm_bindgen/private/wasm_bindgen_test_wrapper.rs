@@ -104,6 +104,11 @@ fn main() {
     let browser = env::var_os("BROWSER").map(|_| {
         rlocation!(runfiles, env::var("BROWSER").unwrap()).expect("Failed to locate browser")
     });
+    let browser_args = env::var("BROWSER_ARGS").expect("Failed to find `BROWSER_ARGS` env var");
+    let mut browser_args = browser_args
+        .split_whitespace()
+        .map(str::to_string)
+        .collect::<Vec<_>>();
 
     let webdriver = rlocation!(
         runfiles,
@@ -149,10 +154,11 @@ fn main() {
 
             let user_data_dir = undeclared_test_outputs.join("user_data_dir");
 
+            browser_args.push(format!("--user-data-dir={}", user_data_dir.display()));
             write_webdriver_for_browser(
                 &webdriver_json,
                 Some("goog:chromeOptions"),
-                &vec![format!("user-data-dir={}", user_data_dir.display())],
+                &browser_args,
                 &browser,
                 &updated_webdriver_json,
             );
@@ -168,7 +174,7 @@ fn main() {
             write_webdriver_for_browser(
                 &webdriver_json,
                 Some("moz:firefoxOptions"),
-                &Vec::new(),
+                &browser_args,
                 &browser,
                 &updated_webdriver_json,
             );
@@ -213,7 +219,7 @@ fn main() {
             write_webdriver_for_browser(
                 &webdriver_json,
                 None,
-                &Vec::new(),
+                &browser_args,
                 &browser,
                 &updated_webdriver_json,
             );

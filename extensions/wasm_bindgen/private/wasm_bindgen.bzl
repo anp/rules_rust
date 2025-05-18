@@ -231,6 +231,7 @@ def _rust_wasm_bindgen_toolchain_impl(ctx):
         webdriver_json = ctx.file.webdriver_json,
         browser_type = ctx.attr.browser_type,
         browser = ctx.executable.browser,
+        browser_args = ctx.attr.browser_args,
         all_test_files = all_test_files,
 
         # Deprecated
@@ -284,6 +285,10 @@ For additional information, see the [Bazel toolchains documentation][toolchains]
                 "chrome",
                 "safari",
             ],
+        ),
+        "browser_args": attr.string_list(
+            doc = "Arguments to pass to the browser run by webdriver.",
+            default = [],
         ),
         "wasm_bindgen_cli": attr.label(
             doc = "The label of a `wasm-bindgen-cli` executable.",
