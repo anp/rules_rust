@@ -25,6 +25,7 @@ load(
     "load_cargo",
     "load_clippy",
     "load_llvm_tools",
+    "load_miri",
     "load_rust_compiler",
     "load_rust_src",
     "load_rust_stdlib",
@@ -454,6 +455,25 @@ def _rust_toolchain_tools_repository_impl(ctx):
         cargo_content,
     ]
     sha256s.update(rustc_sha256 | clippy_sha256 | cargo_sha256)
+
+    # Load Miri and rust-src for nightly toolchains
+    if version.startswith("nightly"):
+        miri_content, miri_sha256 = load_miri(
+            ctx = ctx,
+            iso_date = iso_date,
+            target_triple = exec_triple,
+            version = version,
+        )
+        build_components.append(miri_content)
+        sha256s.update(miri_sha256)
+        
+        # Load rust-src for building Miri sysroot
+        rust_src_sha256 = load_rust_src(
+            ctx = ctx,
+            iso_date = iso_date,
+            version = version,
+        )
+        sha256s.update(rust_src_sha256)
 
     if ctx.attr.rustfmt_version:
         rustfmt_version = ctx.attr.rustfmt_version

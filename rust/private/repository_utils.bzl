@@ -171,6 +171,33 @@ def BUILD_for_clippy(target_triple):
         binary_ext = system_to_binary_ext(target_triple.system),
     )
 
+_build_file_for_miri_template = """\
+filegroup(
+    name = "miri_bin",
+    srcs = ["bin/miri{binary_ext}"],
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "miri",
+    actual = ":miri_bin",
+    visibility = ["//visibility:public"],
+)
+"""
+
+def BUILD_for_miri(target_triple):
+    """Emits a BUILD file for the miri archive.
+
+    Args:
+        target_triple (str): The triple of the target platform
+
+    Returns:
+        str: The contents of a BUILD file
+    """
+    return _build_file_for_miri_template.format(
+        binary_ext = system_to_binary_ext(target_triple.system),
+    )
+
 _build_file_for_llvm_tools = """\
 filegroup(
     name = "llvm_cov_bin",
@@ -449,6 +476,29 @@ def load_clippy(ctx, iso_date, target_triple, version):
     )
 
     return BUILD_for_clippy(target_triple), sha256
+
+def load_miri(ctx, iso_date, target_triple, version):
+    """Loads Miri and yields corresponding BUILD for it
+
+    Args:
+        ctx (repository_ctx): A repository_ctx.
+        iso_date (str): The date of the tool (or None, if the version is a specific version).
+        target_triple (struct): The Rust-style target that this compiler runs on.
+        version (str): The version of the tool among \"nightly\", \"beta\", or an exact version.
+
+    Returns:
+        Tuple[str, str]: The BUILD file contents for Miri and the sha256 of its artifact
+    """
+    sha256 = load_arbitrary_tool(
+        ctx,
+        iso_date = iso_date,
+        target_triple = target_triple,
+        tool_name = "miri",
+        tool_subdirectories = ["miri-preview"],
+        version = version,
+    )
+
+    return BUILD_for_miri(target_triple), sha256
 
 def load_cargo(ctx, iso_date, target_triple, version):
     """Loads Cargo and yields corresponding BUILD for it
